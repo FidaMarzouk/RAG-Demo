@@ -10,6 +10,10 @@
 provider = "ollama"
 model = "llama3.1"
 # timeout_seconds = 900   # default for local providers
+# Cap each judge reply: a small local model can get stuck repeating itself
+# inside schema-constrained JSON and generate for 10+ minutes. A capped reply
+# fails fast and is retried instead of eating the golden's whole time budget.
+options = { generation_kwargs = { num_predict = 2048 } }
 
 [thresholds]
 default = 0.7
