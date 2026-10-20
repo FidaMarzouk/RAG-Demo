@@ -1,0 +1,5 @@
+Wind power generates electricity by using turbines to convert the kinetic energy of moving air into mechanical power, which a generator then converts into electricity. Modern wind turbines can be installed onshore or offshore, with offshore turbines generally producing more consistent output due to stronger and steadier winds over open water, though they are more expensive to install and maintain.
+
+Wind turbine capacity has grown substantially over the past two decades; some offshore turbines now exceed 12 megawatts per unit. Like solar, wind is an intermittent source, and its output depends heavily on local wind conditions and seasonal weather patterns.
+
+Wind farms can also raise concerns around noise, visual impact, and effects on local bird and bat populations, though modern siting practices and turbine design have reduced these impacts considerably compared to earlier generations of wind technology.

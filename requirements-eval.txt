@@ -1,0 +1,11 @@
+# Everything needed to run this project's evaluation suites LOCALLY: the
+# app's own dependencies plus the elyaeval framework (with the Ollama judge
+# SDK), installed from the elyaeval GitHub repo at a pinned release tag.
+#
+# CI does NOT use this file: the Tekton pipeline runs the suites inside the
+# elyaeval runner image, which already contains elyaeval.
+#
+# Point the URL at wherever the elyaeval repo lives, and keep the tag in step
+# with the runner-image tag in pipelinerun.yaml.
+-r requirements.txt
+elyaeval[ollama] @ git+https://github.com/FidaMarzouk/DeepEval-based-Testing-Framework-for-LLM-Applications.git@v0.8.0#subdirectory=elyaeval

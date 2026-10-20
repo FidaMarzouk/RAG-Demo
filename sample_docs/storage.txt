@@ -1,0 +1,5 @@
+Energy storage is critical for integrating variable renewable sources like solar and wind into the electric grid. Lithium-ion batteries are currently the dominant storage technology due to their high energy density, falling costs, and fast response times, but they are typically limited to a few hours of discharge duration.
+
+Pumped-storage hydropower remains the largest form of grid-scale energy storage worldwide by capacity. It works by pumping water uphill to a reservoir when electricity is cheap or abundant, then releasing it through turbines to generate power when demand is high.
+
+Emerging long-duration storage technologies, including flow batteries, compressed air energy storage, and thermal storage, aim to fill the gap for storage durations of 8 hours or more, which lithium-ion batteries currently struggle to provide cost-effectively.

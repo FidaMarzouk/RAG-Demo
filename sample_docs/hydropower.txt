@@ -1,0 +1,7 @@
+Hydropower generates electricity from the energy of moving water. Most large plants use a dam to hold water in a reservoir; releasing that water through turbines spins generators. Run-of-river plants instead divert part of a river's natural flow through turbines with little or no storage, so their output follows the river's seasonal flow.
+
+Hydropower is the largest source of renewable electricity worldwide, supplying roughly one sixth of global electricity generation. The largest power station of any kind by installed capacity is the Three Gorges Dam on the Yangtze River in China, at about 22.5 gigawatts. Hydropower plants are long-lived assets: with maintenance and periodic equipment upgrades, dams and powerhouses often operate for 50 to 100 years.
+
+Because reservoir plants can increase or decrease output within minutes, they are valuable for balancing the grid when solar and wind output changes. Pumped-storage hydropower, which pumps water back uphill to store energy, is described in the energy storage document.
+
+Hydropower also has environmental and social costs. Dams block fish migration unless fish ladders or other passages are built, change river sediment flows and water temperature downstream, and large reservoirs can require relocating communities. In warm climates, decaying vegetation in reservoirs can release methane, a potent greenhouse gas. Droughts reduce output, a risk that is growing as rainfall patterns change.

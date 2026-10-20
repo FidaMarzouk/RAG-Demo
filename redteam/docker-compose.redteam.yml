@@ -1,0 +1,17 @@
+services:
+  db_redteam:
+    image: pgvector/pgvector:pg16
+    container_name: rag_demo_db_redteam
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: raguser
+      POSTGRES_PASSWORD: ragpass
+      POSTGRES_DB: ragdb
+    ports:
+      - "5433:5432"   # different host port — 5432 stays free for the real db
+    volumes:
+      - rag_demo_pgdata_redteam:/var/lib/postgresql/data   # separate volume — separate disk data
+      - ../db/schema.sql:/docker-entrypoint-initdb.d/schema.sql   # reuses the demo app's schema, no copy needed
+
+volumes:
+  rag_demo_pgdata_redteam:

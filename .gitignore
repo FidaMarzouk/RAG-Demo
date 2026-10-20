@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# secrets (GROQ_API_KEY, DATABASE_URL, ...)
+.env
+.env.*
+
+# elyaeval / DeepEval output
+report/
+.elyaeval_cache/
+.deepeval/
+.deepeval_cache.json
+.deepeval-cache.json
+
+# redteam: poisoned corpus built from sample_docs + redteam/poisoned_docs
+.redteam_corpus/

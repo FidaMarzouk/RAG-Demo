@@ -1,0 +1,15 @@
+# The RAG app's own dependencies (what the API needs to run).
+llama-index-core>=0.14,<0.15
+llama-index-vector-stores-postgres>=0.9,<0.10
+llama-index-embeddings-ollama>=0.10,<0.11
+llama-index-llms-ollama>=0.11,<0.12
+llama-index-llms-groq                      # only used with LLM_PROVIDER=groq
+psycopg2-binary==2.9.13
+asyncpg
+fastapi
+uvicorn
+python-dotenv>=1.2.2,<2
+requests
+# tracing spans for the component evaluation (no judge/metrics in the app);
+# keep in step with the deepeval version elyaeval pins
+deepeval==4.2.0

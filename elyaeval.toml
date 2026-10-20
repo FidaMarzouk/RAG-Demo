@@ -1,0 +1,36 @@
+# elyaeval configuration for this demo (read by elyaeval from the working
+# directory upward). Any value can be overridden per run with ELYAEVAL_JUDGE_*
+# environment variables, e.g. to try a hosted judge:
+#   ELYAEVAL_JUDGE_PROVIDER=anthropic ELYAEVAL_JUDGE_MODEL=claude-sonnet-5-5 \
+#   ANTHROPIC_API_KEY=... deepeval test run test_elyaeval_rag_qa.py
+
+[judge]
+# Local Ollama judge, separate from the Groq generator so a model never
+# grades its own answers. Native Ollama API = schema-constrained JSON.
+provider = "ollama"
+model = "llama3.1"
+# timeout_seconds = 900   # default for local providers
+
+[thresholds]
+default = 0.7
+
+[cache]
+# Re-running the suite after an unrelated change reuses identical judgements
+# instead of re-waiting for the local judge (`elyaeval cache clear` to reset).
+enabled = true
+
+[regression]
+# Defaults; run `elyaeval calibrate` on a --elyaeval-repeats 3 run to get
+# noise-based per-metric tolerances for this judge and suite size.
+tolerance = 0.02
+alpha = 0.05
+max_error_rate_increase = 0.05
+
+[budget]
+# A local 8B judge needs minutes per golden: cap a run's wall clock and let
+# P0 goldens go first. Override per run: --elyaeval-budget-seconds 600.
+max_seconds = 1800
+on_exceed = "stop"
+
+# [pricing]
+# judge_per_hour = 0.40   # turn local judge time into dollars, if you want a cost figure

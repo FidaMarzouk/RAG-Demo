@@ -1,0 +1,5 @@
+Solar power converts sunlight into electricity using photovoltaic (PV) panels or concentrated solar power (CSP) systems. PV panels are made of semiconductor materials, typically silicon, that generate an electric current when exposed to light through the photovoltaic effect. CSP systems instead use mirrors or lenses to concentrate sunlight onto a small area to produce heat, which then drives a steam turbine.
+
+The cost of solar PV has dropped by more than 80% since 2010, making it one of the cheapest sources of new electricity generation in many parts of the world. Solar panels typically have a lifespan of 25 to 30 years, after which output gradually degrades rather than stopping abruptly.
+
+A key limitation of solar power is intermittency: panels only generate electricity when the sun is shining, which requires either battery storage, grid-scale balancing, or backup generation to ensure a steady supply. Battery storage costs have also fallen significantly, improving the economics of pairing solar with storage.

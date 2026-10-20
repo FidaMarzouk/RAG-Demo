@@ -1,0 +1,7 @@
+A heat pump heats a building by moving heat from outside to inside rather than generating heat by burning fuel or using electric resistance. It works like a refrigerator in reverse: a refrigerant absorbs heat from the outdoor air, the ground, or water, is compressed to raise its temperature, and then releases that heat indoors. Most heat pumps can also run in reverse to provide cooling in summer.
+
+The efficiency of a heat pump is measured by its coefficient of performance (COP): the units of heat delivered per unit of electricity consumed. Typical heat pumps reach a COP of about 3 to 4, meaning they deliver three to four times more heat than the electricity they use, while an electric resistance heater has a COP of 1.
+
+Air-source heat pumps extract heat from outdoor air and are the most common and cheapest to install. Ground-source (geothermal) heat pumps circulate fluid through buried pipes, where the ground stays at a fairly constant temperature year-round, which gives them higher and steadier efficiency but a higher installation cost. An air-source heat pump's efficiency falls as outdoor temperatures drop, but modern cold-climate models keep heating effectively down to about minus 25 degrees Celsius.
+
+Because they run on electricity, heat pumps become cleaner as more of the grid's electricity comes from renewable sources, which makes them a central technology for decarbonizing heating in buildings.

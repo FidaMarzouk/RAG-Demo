@@ -1,0 +1,7 @@
+Geothermal energy uses heat from inside the Earth. Geothermal power plants drill wells into underground reservoirs of hot water or steam and use that heat to drive turbines. There are three main plant types: dry steam plants use steam directly from the reservoir; flash steam plants depressurize very hot water so part of it "flashes" into steam; and binary cycle plants pass moderately hot water through a heat exchanger to boil a second fluid with a lower boiling point, which then drives the turbine.
+
+The first geothermal power generation took place at Larderello, Italy, in 1904, and Larderello still produces geothermal electricity today. Iceland is a leading user of geothermal energy: roughly a quarter of its electricity comes from geothermal plants, and around 90 percent of its homes are heated with geothermal hot water.
+
+Unlike solar and wind, geothermal plants produce power around the clock regardless of weather, so they typically run at capacity factors above 70 percent, often close to 90 percent. Their main limitation is geography: conventional geothermal power needs hot reservoirs relatively close to the surface, which occur mostly near tectonic plate boundaries and volcanic regions.
+
+Enhanced geothermal systems (EGS) aim to expand where geothermal power is possible by injecting fluid into hot, dry rock to create or widen fractures through which water can circulate and be heated. Injecting fluid underground can trigger small earthquakes (induced seismicity), so EGS projects monitor seismic activity closely.
