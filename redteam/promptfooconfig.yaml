@@ -9,10 +9,10 @@
 # Prereqs before running:
 #   1. App running locally: `uvicorn src.api:app --host 0.0.0.0 --port 8000` from the project root
 #   2. `npm install -g promptfoo` (or use npx per command below)
-#   3. Ollama running locally with llama3.1 pulled (see the project README).
-#      redteam.provider below points promptfoo's own attacker/grader at it — no
-#      OPENAI_API_KEY needed. Read the "Local grading tradeoffs" note in README.md
-#      before relying on this for anything beyond your own testing/learning.
+#   3. Grading and attack generation run on promptfoo's hosted service (see the
+#      note at the bottom). Run the existing cases with `npx promptfoo redteam eval`:
+#      regenerating would bring back rag-poisoning cases whose built-in grader
+#      promptfoo 0.124.1 lacks (redteam.yaml grades them with an llm-rubric).
 
 targets:
   - id: http
@@ -26,9 +26,21 @@ targets:
         query: '{{prompt}}'
         top_k: 3
       transformResponse: 'json.answer'
-      # extractSessionId not needed — /query is stateless (no conversation memory),
-      # so multi-turn strategies (crescendo/GOAT) will replay full transcripts
-      # rather than relying on server-side session state. See note in README.
+      # Multi-turn strategies (crescendo) send the conversation as a JSON list of
+      # chat messages; /query takes one question string and keeps no history, so
+      # send the latest user turn (the attacker still adapts to every reply).
+      transformRequest: |
+        (prompt) => {
+          try {
+            const messages = JSON.parse(prompt);
+            if (Array.isArray(messages)) {
+              const turns = messages.filter((m) => m && m.role === 'user');
+              if (turns.length) return String(turns[turns.length - 1].content);
+            }
+          } catch (e) {}
+          return prompt;
+        }
+      # extractSessionId not needed: /query is stateless (no conversation memory).
 
 redteam:
   purpose: >
@@ -73,14 +85,14 @@ redteam:
     # "jailbreak" (iterative optimizer) and legacy "prompt-injection" both
     # route through a remote-only meta-provider and will hard-crash the run
     # under PROMPTFOO_DISABLE_REDTEAM_REMOTE_GENERATION=true. jailbreak-templates
-    # is the static, fully-local-compatible substitute; crescendo's multi-turn
-    # escalation runs locally through your configured `provider` below.
+    # is the static, fully-local-compatible substitute. With no `provider`
+    # configured below, crescendo's attacker and scorer run on promptfoo's service.
     - jailbreak-templates  # static jailbreak template library, no remote optimizer
-    - crescendo             # multi-turn gradual escalation (replayed transcript, see above)
+    - crescendo             # multi-turn gradual escalation (latest turn sent, see transformRequest)
 
-  # Attacker + grader model — both generation and grading route through this,
-  # so no OPENAI_API_KEY is needed. See README.md for the quality tradeoff.
-  provider:
-    id: ollama:chat:llama3.1
-    config:
-      apiBaseUrl: http://localhost:11434
+  # No `provider` here on purpose: with none configured (and no OPENAI_API_KEY),
+  # promptfoo grades every case, generates attacks and drives crescendo through
+  # its hosted service (promptfoo 0.124.1: RedteamGraderBase prefers remote
+  # grading when neither redteam.provider nor defaultTest.options.provider is
+  # set). Requires a verified email on first run; prompts and the app's answers
+  # are sent to promptfoo's API.

@@ -18,5 +18,5 @@ report/
 # reranker model, downloaded on first use
 .flashrank_cache/
 
-# redteam: poisoned corpus built from sample_docs + redteam/poisoned_docs
-.redteam_corpus/
+# redteam: poisoned corpus (no leading dot: LlamaIndex skips hidden folders) built from sample_docs + redteam/poisoned_docs
+redteam_corpus/

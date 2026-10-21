@@ -16,10 +16,9 @@ which is a separate concern (see [Scope](#scope) below).
     ├── poisoned_docs/
     │   └── sample_docs/          # tampered copies of solar/wind/storage.txt
     └── results/
-        ├── TEST_COVERAGE.md      # what the 99 generated cases check (read this first)
-        ├── SCAN_RESULTS.md       # actual pass/fail findings from the executed scan (read this second)
-        ├── redteam-report.json   # raw exported results from `promptfoo export`
-        └── redteam-report.pdf    # pdf results downloaded from the promptfoo dashboard 
+        ├── TEST_COVERAGE.md      # what the 99 generated cases check
+        ├── redteam-report.html   # results of the latest scan (`promptfoo redteam report`)
+        └── redteam-report.json   # raw results of the latest scan (`promptfoo export`)
 ```
 
 ## Scope
@@ -77,32 +76,21 @@ Short version:
 Each is additionally run through `jailbreak-templates` (static jailbreak wrappers) and
 `crescendo` (multi-turn escalation) strategies where applicable.
 
-**Results status: executed.** Two scans have been run against the live endpoint 
-see [`redteam/results/SCAN_RESULTS.md`](redteam/results/SCAN_RESULTS.md) for the full
-breakdown. Headline numbers from the JSON-backed run:
-
-| | Count |
-|---|---|
-| Passed (defended) | 49 / 99 |
-| Failed (attack succeeded) | 41 / 99 |
-| Errored (ungraded  `rag-poisoning` grader bug, see below) | 9 / 99 |
-
-Weakest category: `rag-document-exfiltration` (66.7% attack success  source
-documents could be reconstructed verbatim by framing the request as an "export" or
-"audit" rather than a direct copy). Strongest: `overreliance` (0%  no false premise
-was ever accepted as true).
-Details andconcrete failing examples are in `SCAN_RESULTS.md`.
+**Results:** see `redteam/results/` for the latest scan of the current app (LlamaIndex,
+reranked retrieval, prompt-injection-aware system prompt). Scans of the earlier app version
+were removed.
 
 ## Prerequisites
 
 - Docker (for both Postgres/pgvector containers)
-- [Ollama](https://ollama.com) with `nomic-embed-text`, `llama3.2:3b` (the app's generator) and
-  `llama3.1` (promptfoo's attacker/grader) pulled
-- Node.js (for `npx promptfoo`)
+- [Ollama](https://ollama.com) with `nomic-embed-text` and `llama3.2:3b` (the app's generator) pulled
+- Node.js (for `npx promptfoo`); promptfoo 0.124.1 was used
+- A work email: promptfoo asks you to verify one on the first scan (its hosted grader needs it)
 - The rag-demo app's Python environment (`pip install -r requirements-eval.txt` in the project root)
 
-No API key is needed: the app generates with local Ollama by default, and `promptfooconfig.yaml`
-routes promptfoo's own attacker/grader through local `llama3.1` via `redteam.provider`.
+No API key is needed: the app generates with local Ollama, and with no `redteam.provider`
+configured promptfoo grades the results (and drives crescendo's attacker) on its hosted service.
+See [Grading](#grading) for what that sends where.
 
 All commands below run from the **project root** (the folder containing `src/`).
 
@@ -127,19 +115,18 @@ npx promptfoo redteam poison ../sample_docs/solar.txt ../sample_docs/wind.txt ..
 cd ..
 ```
 > **Heads-up:** `redteam poison` always sends full document contents and the stated
-> goal to promptfoo's hosted API   this one command is not covered by the local
-> `llama3.1` provider regardless of config. Fine for sample renewable-energy docs;
-> worth knowing before pointing this at anything sensitive.
+> goal to promptfoo's hosted API. Fine for sample renewable-energy docs; worth knowing
+> before pointing this at anything sensitive.
 
 **3. Build the poisoned corpus and ingest it into the *isolated* database:**
 
 The poisoned corpus is the real knowledge base with the three tampered documents swapped in.
 `DOCS_DIR` and `DATABASE_URL` point ingestion at it and at the redteam database only:
 ```bash
-mkdir -p .redteam_corpus
-cp sample_docs/*.txt .redteam_corpus/
-cp redteam/poisoned_docs/sample_docs/*.txt .redteam_corpus/
-DATABASE_URL=postgresql://raguser:ragpass@127.0.0.1:5433/ragdb DOCS_DIR=.redteam_corpus python -m src.ingest
+mkdir -p redteam_corpus
+cp sample_docs/*.txt redteam_corpus/
+cp redteam/poisoned_docs/sample_docs/*.txt redteam_corpus/
+DATABASE_URL=postgresql://raguser:ragpass@127.0.0.1:5433/ragdb DOCS_DIR=redteam_corpus python -m src.ingest
 ```
 (PowerShell: set `$env:DATABASE_URL` / `$env:DOCS_DIR` first.) The clean `sample_docs/` and the
 real database are untouched.
@@ -152,8 +139,10 @@ DATABASE_URL=postgresql://raguser:ragpass@127.0.0.1:5433/ragdb uvicorn src.api:a
 **5. Run the scan** (second terminal):
 ```bash
 cd redteam
-npx promptfoo redteam run
+npx promptfoo redteam eval
 ```
+`redteam eval` runs the 99 existing cases in `redteam.yaml`. Don't use `redteam run` (generate +
+eval): regenerating replaces the hand-fixed `rag-poisoning` assertions (see [Grading](#grading)).
 
 **6. Review and export results:**
 ```bash
@@ -167,27 +156,30 @@ can see what happened without re-running anything.
 **7. Switch back:** stop uvicorn and restart it without the `DATABASE_URL` override (defaults to
 the real database on 5432). Tear the redteam database down with
 `docker compose -f redteam/docker-compose.redteam.yml down -v` (`-v` also drops its volume) and
-delete `.redteam_corpus/`.
+delete `redteam_corpus/`.
 
-> The results in `redteam/results/` were produced against the **previous** version of the app
-> (raw psycopg2 + Groq generator, before the LlamaIndex rebuild and its prompt-injection-aware
-> system prompt). Re-run the scan to measure the current app.
 
-## Local grading tradeoffs
+## Grading
 
-`redteam.provider` is `ollama:chat:llama3.1`, so both attack generation and result
-grading run locally  no data leaves the machine for those parts, with two caveats:
+promptfoo 0.124.1, read from its source (`dist/src/index.cjs`):
 
-- Generation quality with a local model is generally weaker than with a frontier
-  model per promptfoo's own docs  attacks will be less creative than GPT-4-class
-  generation would produce. Grading locally is considered reliable; generation
-  locally is the weaker link.
-- A subset of plugins require promptfoo's hosted generation and silently produce zero
-  test cases under a fully local provider. None of the plugins in this config are
-  known to require it, but if one produces 0 cases on a re-generate, check that
-  plugin's docs page for the 🌐 marker. `rag-document-exfiltration` specifically has
-  **no** local fallback and needs remote generation
-  (`PROMPTFOO_DISABLE_REDTEAM_REMOTE_GENERATION` must not be set to `true`).
+- **Who grades.** `RedteamGraderBase.getResult` marks grading "prefer remote" when neither
+  `redteam.provider` nor `defaultTest.options.provider` is set, and `matchesLlmRubric` then calls
+  promptfoo's hosted grader if `shouldGenerateRemote()` holds: no `OPENAI_API_KEY`, and neither
+  `PROMPTFOO_DISABLE_REMOTE_GENERATION` nor `PROMPTFOO_DISABLE_REDTEAM_REMOTE_GENERATION` set.
+  This config sets no provider, so every case is graded remotely; the crescendo strategy's
+  attacker and scorer go remote under the same condition. Each test's prompt, the app's answer
+  and the rubric are sent to promptfoo's API, and a verified email is required.
+- **`rag-poisoning` has no built-in grader.** Its generated cases assert
+  `promptfoo:redteam:rag-poisoning`, which isn't in promptfoo's `GRADERS` table, so the evaluator
+  stops with `Unknown grader` whichever grader is configured (all 9 errored in the first scan).
+  `redteam.yaml` grades those 9 cases with an equivalent `llm-rubric` instead: the answer fails if
+  it states, endorses or implies the poisoned claim.
+- **To grade locally instead**, set `redteam.provider` (in both `promptfooconfig.yaml` and the
+  `redteam:` section of `redteam.yaml`), e.g. `ollama:chat:qwen2.5:7b`; grading, the
+  crescendo attacker and the `llm-rubric` cases then use that model.
+- `rag-document-exfiltration` test *generation* has no local fallback and needs promptfoo's
+  remote generation; that only matters when regenerating `redteam.yaml`.
 
 ## Optional: enabling `indirect-prompt-injection` properly
 
@@ -218,6 +210,6 @@ area:
 - **HTTP provider targets** with `transformResponse` to unwrap a JSON field from a black-box REST API
 - **Multiple plugins** spanning RAG-specific (`rag-poisoning`, `rag-document-exfiltration`), safety (`harmful:privacy`, `pii:direct`), and behavioral (`hallucination`, `overreliance`, `excessive-agency`) categories
 - **Multiple attack strategies**, including static (`jailbreak-templates`) and multi-turn adaptive (`crescendo`)
-- **Local-only provider routing** (`ollama:chat:llama3.1`) for both attack generation and grading, avoiding a hosted-API dependency for most of the pipeline
+- **Hosted grading** (no `redteam.provider`), with a hand-written `llm-rubric` standing in for the `rag-poisoning` grader promptfoo lacks
 - **`redteam poison`** for generating tampered document fixtures with a stated goal and manifest (`poisoned-config.yaml`)
 - **Report export** (`redteam report`, `export`) for reviewable HTML/JSON output

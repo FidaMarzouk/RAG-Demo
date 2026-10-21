@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>results_rag_qa_20261021T110055Z</title>
+<style>/* =========================================================================
+   elyaeval / reporting  shared report theme
+   Single source of truth for every report renderer (html_report.py's
+   render_html_report() and render_comparison_html()). Imported by reading this file's text 
+   and inlining it into a <style> tag, so every generated report stays a single self-contained
+   HTML file with no external asset/CDN dependency, while every report
+   still shares one visual language.
+   ========================================================================= */
+
+:root {
+  color-scheme: light;
+
+  /* brand accents */
+  --ely-cyan:   #1EB8E8;
+  --ely-pink:   #E6127D;
+  --ely-blue:   #2F6FED;
+  --ely-navy:   #16255C;
+  --ely-black:  #0D0D0F;
+
+  /* tinted backgrounds for the accents above */
+  --ely-cyan-tint: #E6F8FD;
+  --ely-pink-tint: #FCE9F3;
+  --ely-blue-tint: #EAF0FE;
+
+  /* semantic (kept distinct from brand accents  pass/fail must read as
+     green/red regardless of theme, this is a test report first) */
+  --pass:   #1a7f37;
+  --fail:   #cf222e;
+  --pass-tint: #E9F7EF;
+  --fail-tint: #FDEDEE;
+
+  --muted:  #6E7781;
+  --border: #E3E6EA;
+  --bg-alt: #F6F8FA;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 2.5rem clamp(1.25rem, 4vw, 3rem) 3rem;
+  color: var(--ely-black);
+  background:
+    radial-gradient(var(--border) 1px, transparent 1.5px) 0 0 / 22px 22px,
+    #ffffff;
+  background-attachment: fixed;
+}
+
+.report-shell {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* ---- header ------------------------------------------------------- */
+
+.report-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--ely-black);
+  white-space: nowrap;
+}
+
+.brand .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ely-pink);
+  flex: none;
+}
+
+.report-titleblock h1 {
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0.35rem 0 0;
+}
+
+.report-titleblock h1 em {
+  font-style: italic;
+  font-weight: 600;
+  color: var(--ely-blue);
+}
+
+.meta-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pill strong {
+  color: var(--ely-black);
+  font-weight: 700;
+}
+
+.pill.pill-dark {
+  background: var(--ely-black);
+  border-color: var(--ely-black);
+  color: #fff;
+}
+
+.pill.pill-dark strong { color: #fff; }
+
+/* ---- section labels (small-caps + colored dot, like site's eyebrow) - */
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 2.5rem 0 1rem;
+}
+
+.section-label::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ely-pink);
+  flex: none;
+}
+
+.section-label.cyan::before  { background: var(--ely-cyan); }
+.section-label.blue::before  { background: var(--ely-blue); }
+
+/* ---- KPI cards (styled after the site's case-study stat cards) ----- */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.kpi-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.1rem 1.3rem 1.3rem;
+  background: #ffffff;
+}
+
+.kpi-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.85rem;
+}
+
+.kpi-tag .dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+
+.kpi-card.cyan .kpi-tag { background: var(--ely-cyan-tint); color: #0C7C9B; }
+.kpi-card.cyan .kpi-tag .dot { background: var(--ely-cyan); }
+.kpi-card.pink .kpi-tag { background: var(--ely-pink-tint); color: var(--ely-pink); }
+.kpi-card.pink .kpi-tag .dot { background: var(--ely-pink); }
+.kpi-card.blue .kpi-tag { background: var(--ely-blue-tint); color: var(--ely-blue); }
+.kpi-card.blue .kpi-tag .dot { background: var(--ely-blue); }
+.kpi-card.neutral .kpi-tag { background: var(--bg-alt); color: var(--muted); }
+.kpi-card.neutral .kpi-tag .dot { background: var(--muted); }
+
+.kpi-value {
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.kpi-card.cyan .kpi-value { color: #0C7C9B; }
+.kpi-card.pink .kpi-value { color: var(--ely-pink); }
+.kpi-card.blue .kpi-value { color: var(--ely-blue); }
+.kpi-card.neutral .kpi-value { color: var(--ely-black); }
+
+.kpi-caption {
+  font-size: 0.78rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding-top: 0.6rem;
+}
+
+/* ---- tables ---------------------------------------------------------- */
+
+.table-wrap {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.86rem;
+}
+
+caption { caption-side: top; text-align: left; }
+
+th, td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+td { border-right: 1px solid var(--border); }
+td:last-child, th:last-child { border-right: none; }
+
+th {
+  background: var(--bg-alt);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+}
+
+.table-wrap table { border-radius: 0; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:nth-child(even) { background: #FBFCFD; }
+tbody tr:hover { background: var(--ely-cyan-tint); }
+
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.reason { color: var(--muted); font-size: 0.82rem; max-width: 32rem; }
+.error-cell { color: var(--fail); font-size: 0.82rem; }
+.summary-table td, .summary-table th { white-space: nowrap; }
+.detail-table td.reason, .detail-table td.input { white-space: normal; }
+
+/* ---- badges (pass/fail/status) -------------------------------------- */
+
+.badge {
+  display: inline-flex;
+  white-space: nowrap;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.badge.pass { background: var(--pass-tint); color: var(--pass); }
+.badge.fail { background: var(--fail-tint); color: var(--fail); }
+.badge.neutral { background: var(--bg-alt); color: var(--muted); }
+.badge.pink { background: var(--ely-pink-tint); color: var(--ely-pink); }
+.badge.cyan { background: var(--ely-cyan-tint); color: #0C7C9B; }
+.badge.blue { background: var(--ely-blue-tint); color: var(--ely-blue); }
+
+/* kept for backward-compat class names used elsewhere */
+.pass { color: var(--pass); font-weight: 600; }
+.fail { color: var(--fail); font-weight: 600; }
+
+/* ---- score bar -------------------------------------------------------- */
+
+.bar-cell { display: flex; align-items: center; gap: 0.5rem; }
+.bar-track { flex: 1; background: var(--bg-alt); border-radius: 3px; height: 8px; min-width: 60px; }
+.bar-fill { background: var(--pass); border-radius: 3px; height: 8px; }
+.bar-fill.low { background: var(--fail); }
+
+/* ---- footer ------------------------------------------------------------ */
+
+.report-footer {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+/* ---- per-golden cards ------------------------------------------------
+   One card per golden: its input/output shown once, then a compact table
+   of its metrics (instead of repeating the texts on every metric row). */
+
+.filter-toggle { position: absolute; opacity: 0; pointer-events: none; }
+
+.filter-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 0.78rem;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.filter-label::before {
+  content: "";
+  width: 0.8rem;
+  height: 0.8rem;
+  border: 1.5px solid var(--muted);
+  border-radius: 4px;
+  flex: none;
+}
+
+.filter-toggle:checked + .filter-label {
+  border-color: var(--ely-pink);
+  color: var(--ely-pink);
+  background: var(--ely-pink-tint);
+}
+
+.filter-toggle:checked + .filter-label::before {
+  background: var(--ely-pink);
+  border-color: var(--ely-pink);
+}
+
+.filter-toggle:focus-visible + .filter-label { outline: 2px solid var(--ely-blue); outline-offset: 2px; }
+
+.filter-toggle:checked ~ .golden-list .golden-card.all-pass { display: none; }
+
+.golden-list { display: grid; gap: 1.25rem; }
+
+.golden-card {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--fail);
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.golden-card.all-pass { border-left-color: var(--pass); }
+
+.golden-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+
+.golden-title { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+
+.golden-id {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-right: 0.25rem;
+}
+
+.qa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.qa-block { background: #fff; padding: 0.85rem 1.1rem; }
+
+.qa-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.qa-block:first-child .qa-label { color: var(--ely-blue); }
+.qa-block:last-child .qa-label { color: #0C7C9B; }
+
+.qa-text { font-size: 0.88rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+.qa-text details summary { cursor: pointer; list-style: none; }
+.qa-text details[open] summary { display: none; }
+.qa-text .more { color: var(--ely-blue); font-weight: 600; font-size: 0.78rem; }
+
+.golden-card .table-wrap { border: none; border-radius: 0; }
+
+.metric-table th { position: static; }
+.metric-table td { border-right: none; }
+.metric-table .metric-name { font-weight: 600; white-space: nowrap; }
+.metric-table .score-cell { min-width: 9rem; }
+.metric-table .judge, .metric-table .num { white-space: nowrap; }
+.metric-table .why { min-width: 18rem; white-space: pre-line; }
+
+@media print {
+  .filter-toggle, .filter-label { display: none; }
+  .golden-card { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="report-shell">
+<div class="report-header">
+  <div class="report-titleblock">
+    <div class="brand"><span class="dot"></span>elyaeval</div>
+    <h1>results_rag_qa_20261021T110055Z</h1>
+  </div>
+  <div class="meta-pills"><span class="pill">Source <strong>results_rag_qa_20261021T110055Z.csv</strong></span><span class="pill">Rows <strong>11</strong></span></div>
+</div>
+<div class="kpi-grid"><div class="kpi-card blue">
+  <span class="kpi-tag"><span class="dot"></span>Goldens</span>
+  <div class="kpi-value">3</div>
+  <div class="kpi-caption">3 passed every metric</div>
+</div><div class="kpi-card cyan">
+  <span class="kpi-tag"><span class="dot"></span>Pass rate</span>
+  <div class="kpi-value">100%</div>
+  <div class="kpi-caption">Across every metric row</div>
+</div><div class="kpi-card pink">
+  <span class="kpi-tag"><span class="dot"></span>Judge cost</span>
+  <div class="kpi-value"> </div>
+  <div class="kpi-caption">Not reported by the judge provider</div>
+</div><div class="kpi-card neutral">
+  <span class="kpi-tag"><span class="dot"></span>Budget</span>
+  <div class="kpi-value">3.1 min / 30</div>
+  <div class="kpi-caption">28 judge calls · 13,675 tokens (estimated)</div>
+</div></div>
+<h2 class="section-label">Per-metric summary</h2>
+<div class="table-wrap"><table class="summary-table"><thead><tr><th>Metric Name</th><th>Goldens</th><th>Avg score</th><th>95% CI</th><th>Noise σ</th><th>Min</th><th>Max</th><th>Pass rate</th><th>Threshold</th><th>Judge model</th><th>Total cost</th><th>Input tokens</th><th>Output tokens</th></tr></thead><tbody><tr><td>Answer Relevancy</td><td class="num">2</td><td><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">[1.00, 1.00]</td><td class="num"> </td><td class="num">1.00</td><td class="num">1.00</td><td class="num">100% <span class="reason">(2/2)</span></td><td class="num">0.70</td><td>qwen2.5:7b (Ollama)</td><td class="num"> <span class="reason"></span></td><td class="num">≈1,978<span class="reason"></span></td><td class="num">≈237</td></tr><tr><td>Faithfulness</td><td class="num">2</td><td><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">[1.00, 1.00]</td><td class="num"> </td><td class="num">1.00</td><td class="num">1.00</td><td class="num">100% <span class="reason">(2/2)</span></td><td class="num">0.70</td><td>qwen2.5:7b (Ollama)</td><td class="num"> <span class="reason"></span></td><td class="num">≈2,966<span class="reason"></span></td><td class="num">≈333</td></tr><tr><td>Contextual Precision</td><td class="num">2</td><td><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">[1.00, 1.00]</td><td class="num"> </td><td class="num">1.00</td><td class="num">1.00</td><td class="num">100% <span class="reason">(2/2)</span></td><td class="num">0.70</td><td>qwen2.5:7b (Ollama)</td><td class="num"> <span class="reason"></span></td><td class="num">≈2,089<span class="reason"></span></td><td class="num">≈241</td></tr><tr><td>Contextual Recall</td><td class="num">2</td><td><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">[1.00, 1.00]</td><td class="num"> </td><td class="num">1.00</td><td class="num">1.00</td><td class="num">100% <span class="reason">(2/2)</span></td><td class="num">0.70</td><td>qwen2.5:7b (Ollama)</td><td class="num"> <span class="reason"></span></td><td class="num">≈1,846<span class="reason"></span></td><td class="num">≈215</td></tr><tr><td>Contextual Relevancy</td><td class="num">2</td><td><div class="bar-cell"><span class="num">0.75</span><div class="bar-track"><div class="bar-fill" style="width:75%"></div></div></div></td><td class="num">[0.50, 1.00]</td><td class="num"> </td><td class="num">0.50</td><td class="num">1.00</td><td class="num">100% <span class="reason">(2/2)</span></td><td class="num">0.50</td><td>qwen2.5:7b (Ollama)</td><td class="num"> <span class="reason"></span></td><td class="num">≈1,767<span class="reason"></span></td><td class="num">≈396</td></tr><tr><td>Abstention [GEval]</td><td class="num">1</td><td><div class="bar-cell"><span class="num">0.80</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div></div></td><td class="num"> </td><td class="num"> </td><td class="num">0.80</td><td class="num">0.80</td><td class="num">100% <span class="reason">(1/1)</span></td><td class="num">0.70</td><td>qwen2.5:7b (Ollama)</td><td class="num"> <span class="reason"></span></td><td class="num">≈671<span class="reason"></span></td><td class="num">≈187</td></tr></tbody></table></div><p class="reason">≈ tokens estimated by elyaeval from prompt/reply size (~4 characters per token): the judge provider reports none.</p>
+<h2 class="section-label cyan">Per-golden usage</h2><div class="table-wrap"><table class="summary-table"><thead><tr><th>Golden Id</th><th>Priority</th><th>App latency</th><th>App in tokens</th><th>App out tokens</th><th>App cost</th><th>Judge time</th><th>Judge calls</th><th>Judge in tokens</th><th>Judge out tokens</th></tr></thead><tbody><tr><td>solar-lifespan</td><td>P0</td><td class="num">35.6s</td><td class="num">228</td><td class="num">13</td><td class="num"> </td><td class="num">19.1s</td><td class="num">13</td><td class="num">≈5,054</td><td class="num">≈493</td></tr><tr><td>heatpump-cop</td><td>P0</td><td class="num">43.1s</td><td class="num">240</td><td class="num">68</td><td class="num"> </td><td class="num">26.9s</td><td class="num">13</td><td class="num">≈5,592</td><td class="num">≈929</td></tr><tr><td>abstain-powerwall-price</td><td>P0</td><td class="num">33.4s</td><td class="num">177</td><td class="num">23</td><td class="num"> </td><td class="num">10.8s</td><td class="num">2</td><td class="num">≈671</td><td class="num">≈187</td></tr></tbody></table></div><p class="reason">App figures are what the app under test reported for its own call (blank: it reported none). Judge time includes every metric's judge calls and retries.</p>
+<h2 class="section-label pink">Per-golden detail</h2>
+<input type="checkbox" id="only-failing" class="filter-toggle"><label for="only-failing" class="filter-label">Show only failing goldens (0)</label><div class="golden-list"><article class="golden-card all-pass"><header class="golden-head"><div class="golden-title"><span class="golden-id">solar-lifespan</span><span class="pill">Priority <strong>P0</strong></span></div><span class="badge pass">● passed 5/5</span></header><div class="qa-grid"><div class="qa-block"><div class="qa-label">Input</div><div class="qa-text">How long do solar panels typically last?</div></div><div class="qa-block"><div class="qa-label">Output</div><div class="qa-text">Solar panels typically last between 25 to 30 years.</div></div></div><div class="table-wrap"><table class="metric-table"><thead><tr><th>Metric</th><th>Score</th><th>Threshold</th><th>Result</th><th>Judge</th><th>Judge tokens in / out</th><th>Judge time</th><th>Reason / error</th></tr></thead><tbody><tr><td class="metric-name">Answer Relevancy</td><td class="score-cell"><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">0.70</td><td><span class="badge pass">● pass</span></td><td class="judge">qwen2.5:7b (Ollama)</td><td class="num">≈917 / ≈71</td><td class="num">8.9s · 3 calls</td><td class="reason why">The score is 1.00 because the response directly addresses the question about the lifespan of solar panels without including any irrelevant statements.</td></tr><tr><td class="metric-name">Faithfulness</td><td class="score-cell"><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">0.70</td><td><span class="badge pass">● pass</span></td><td class="judge">qwen2.5:7b (Ollama)</td><td class="num">≈1,411 / ≈116</td><td class="num">3.3s · 4 calls</td><td class="reason why">The score is 1.00 because there are no contradictions in the actual output.</td></tr><tr><td class="metric-name">Contextual Precision</td><td class="score-cell"><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">0.70</td><td><span class="badge pass">● pass</span></td><td class="judge">qwen2.5:7b (Ollama)</td><td class="num">≈1,007 / ≈112</td><td class="num">2.4s · 2 calls</td><td class="reason why">The score is 1.00 because the single relevant node is ranked first and correctly identified as &#x27;yes&#x27;, providing accurate information about the typical lifespan of solar panels without any irrelevant nodes to dilute the precision.</td></tr><tr><td class="metric-name">Contextual Recall</td><td class="score-cell"><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">0.70</td><td><span class="badge pass">● pass</span></td><td class="judge">qwen2.5:7b (Ollama)</td><td class="num">≈907 / ≈99</td><td class="num">2.3s · 2 calls</td><td class="reason why">The score is 1.00 because the expected output matches exactly with the information provided in the 2nd node of the retrieval context, indicating a perfect alignment.</td></tr><tr><td class="metric-name">Contextual Relevancy</td><td class="score-cell"><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">0.50</td><td><span class="badge pass">● pass</span></td><td class="judge">qwen2.5:7b (Ollama)</td><td class="num">≈812 / ≈95</td><td class="num">2.0s · 2 calls</td><td class="reason why">The score is 1.00 because the retrieval context directly provides relevant information about the typical lifespan of solar panels, which is exactly what the input is asking for.</td></tr></tbody></table></div></article><article class="golden-card all-pass"><header class="golden-head"><div class="golden-title"><span class="golden-id">heatpump-cop</span><span class="pill">Priority <strong>P0</strong></span></div><span class="badge pass">● passed 5/5</span></header><div class="qa-grid"><div class="qa-block"><div class="qa-label">Input</div><div class="qa-text">What is the typical coefficient of performance of a heat pump, and what does it mean?</div></div><div class="qa-block"><div class="qa-label">Output</div><div class="qa-text">The typical coefficient of performance (COP) of a heat pump is 3 to 4. This means that for every unit of electricity consumed, the heat pump delivers three to four units of heat. In other words, it is three to four times more efficient than an electric resistance heater, which has a COP of 1.</div></div></div><div class="table-wrap"><table class="metric-table"><thead><tr><th>Metric</th><th>Score</th><th>Threshold</th><th>Result</th><th>Judge</th><th>Judge tokens in / out</th><th>Judge time</th><th>Reason / error</th></tr></thead><tbody><tr><td class="metric-name">Answer Relevancy</td><td class="score-cell"><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">0.70</td><td><span class="badge pass">● pass</span></td><td class="judge">qwen2.5:7b (Ollama)</td><td class="num">≈1,061 / ≈166</td><td class="num">10.9s · 3 calls</td><td class="reason why">The score is 1.00 because the output does not contain any irrelevant statements that could distract from the question about the typical coefficient of performance of a heat pump and its meaning.</td></tr><tr><td class="metric-name">Faithfulness</td><td class="score-cell"><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">0.70</td><td><span class="badge pass">● pass</span></td><td class="judge">qwen2.5:7b (Ollama)</td><td class="num">≈1,555 / ≈217</td><td class="num">5.1s · 4 calls</td><td class="reason why">The score is 1.00 because there are no contradictions in the actual output.</td></tr><tr><td class="metric-name">Contextual Precision</td><td class="score-cell"><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">0.70</td><td><span class="badge pass">● pass</span></td><td class="judge">qwen2.5:7b (Ollama)</td><td class="num">≈1,082 / ≈129</td><td class="num">2.8s · 2 calls</td><td class="reason why">The score is 1.00 because the single &#x27;yes&#x27; verdict node is ranked first and directly addresses the input query, making the ranking perfect.</td></tr><tr><td class="metric-name">Contextual Recall</td><td class="score-cell"><div class="bar-cell"><span class="num">1.00</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div></td><td class="num">0.70</td><td><span class="badge pass">● pass</span></td><td class="judge">qwen2.5:7b (Ollama)</td><td class="num">≈939 / ≈116</td><td class="num">2.6s · 2 calls</td><td class="reason why">The score is 1.00 because the expected output clearly and accurately describes the COP of heat pumps and electric resistance heaters, aligning perfectly with the information provided in the node in the retrieval context.</td></tr><tr><td class="metric-name">Contextual Relevancy</td><td class="score-cell"><div class="bar-cell"><span class="num">0.50</span><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div></div></td><td class="num">0.50</td><td><span class="badge pass">● pass</span></td><td class="judge">qwen2.5:7b (Ollama)</td><td class="num">≈955 / ≈301</td><td class="num">5.4s · 2 calls</td><td class="reason why">The score is 0.50 because the retrieval context provides relevant information about the coefficient of performance (COP) of a heat pump, explaining its meaning and typical values, which directly addresses the input query.</td></tr></tbody></table></div></article><article class="golden-card all-pass"><header class="golden-head"><div class="golden-title"><span class="golden-id">abstain-powerwall-price</span><span class="pill">Priority <strong>P0</strong></span></div><span class="badge pass">● passed 1/1</span></header><div class="qa-grid"><div class="qa-block"><div class="qa-label">Input</div><div class="qa-text">How much does a Tesla Powerwall battery cost?</div></div><div class="qa-block"><div class="qa-label">Output</div><div class="qa-text">I cannot provide the cost of a Tesla Powerwall battery. Is there anything else I can help you with?</div></div></div><div class="table-wrap"><table class="metric-table"><thead><tr><th>Metric</th><th>Score</th><th>Threshold</th><th>Result</th><th>Judge</th><th>Judge tokens in / out</th><th>Judge time</th><th>Reason / error</th></tr></thead><tbody><tr><td class="metric-name">Abstention [GEval]</td><td class="score-cell"><div class="bar-cell"><span class="num">0.80</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div></div></td><td class="num">0.70</td><td><span class="badge pass">● pass</span></td><td class="judge">qwen2.5:7b (Ollama)</td><td class="num">≈671 / ≈187</td><td class="num">10.6s · 2 calls</td><td class="reason why">The response correctly states that the information is not available and does not invent an answer, aligning with the evaluation steps. However, it could have briefly mentioned that the retrieval context did not provide the specific cost information requested.</td></tr></tbody></table></div></article></div>
+<div class="report-footer">Generated by elyaeval &middot; results_rag_qa_20261021T110055Z.csv</div>
+</div>
+</body>
+</html>
