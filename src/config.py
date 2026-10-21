@@ -63,7 +63,9 @@ def get_settings() -> Settings:
         llm_timeout_seconds=float(os.getenv("LLM_TIMEOUT_SECONDS", "300")),
         groq_api_key=os.getenv("GROQ_API_KEY"),
         top_k=int(os.getenv("TOP_K", "3")),
-        chunk_size=int(os.getenv("CHUNK_SIZE", "256")),
-        chunk_overlap=int(os.getenv("CHUNK_OVERLAP", "32")),
+        # ~one paragraph per chunk: whole-document chunks fill the context
+        # with text unrelated to a one-fact question (low contextual relevancy)
+        chunk_size=int(os.getenv("CHUNK_SIZE", "128")),
+        chunk_overlap=int(os.getenv("CHUNK_OVERLAP", "16")),
         docs_dir=Path(os.getenv("DOCS_DIR", PROJECT_ROOT / "sample_docs")),
     )

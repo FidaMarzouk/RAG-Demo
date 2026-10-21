@@ -17,6 +17,9 @@ options = { generation_kwargs = { num_predict = 2048 } }
 
 [thresholds]
 default = 0.7
+# Share of the retrieved text that is relevant to the question: with top_k = 3
+# paragraph-sized chunks and a one-fact question, ~0.5 is the realistic maximum.
+contextual_relevancy = 0.4
 
 [cache]
 # Re-running the suite after an unrelated change reuses identical judgements
