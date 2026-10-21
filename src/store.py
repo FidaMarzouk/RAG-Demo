@@ -1,8 +1,8 @@
 """
 LlamaIndex building blocks, created once per process: the embedding model,
 the pgvector store (with an HNSW index, which, unlike IVFFlat, needs no
-training data and so is fine to create on an empty table), the index and the
-generator LLM.
+training data and so is fine to create on an empty table), the index, the
+reranker and the generator LLM.
 """
 
 from __future__ import annotations
@@ -48,6 +48,18 @@ def vector_store() -> PGVectorStore:
 @lru_cache(maxsize=1)
 def index() -> VectorStoreIndex:
     return VectorStoreIndex.from_vector_store(vector_store(), embed_model=embed_model())
+
+
+@lru_cache(maxsize=1)
+def ranker():
+    """Cross-encoder reranker (FlashRank: ONNX, CPU, no PyTorch), or None
+    when RERANK_MODEL is empty. The model (~22 MB) downloads on first use."""
+    s = get_settings()
+    if not s.rerank_model:
+        return None
+    from flashrank import Ranker
+
+    return Ranker(model_name=s.rerank_model, cache_dir=str(s.rerank_cache_dir))
 
 
 @lru_cache(maxsize=1)

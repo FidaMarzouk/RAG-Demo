@@ -18,7 +18,7 @@ from deepeval.tracing import observe, update_current_span, update_current_trace
 from llama_index.core.llms import ChatMessage
 
 from .config import get_settings
-from .store import index, llm
+from .store import index, llm, ranker
 
 SYSTEM_PROMPT = (
     "You are an assistant that answers questions about renewable energy using ONLY the context "
@@ -50,8 +50,21 @@ class Answer:
 
 @observe()
 def retrieve(query: str, top_k: int) -> list[str]:
-    nodes = index().as_retriever(similarity_top_k=top_k).retrieve(query)
-    chunks = [n.node.get_content() for n in nodes]
+    """Vector search for candidates, then rerank and keep the relevant ones
+    (see the retrieval settings in config.py)."""
+    s = get_settings()
+    reranker = ranker()
+    if reranker is None:
+        nodes = index().as_retriever(similarity_top_k=top_k).retrieve(query)
+        chunks = [n.node.get_content() for n in nodes]
+    else:
+        from flashrank import RerankRequest
+
+        nodes = index().as_retriever(similarity_top_k=max(top_k, s.retrieve_candidates)).retrieve(query)
+        passages = [{"id": i, "text": n.node.get_content()} for i, n in enumerate(nodes)]
+        ranked = reranker.rerank(RerankRequest(query=query, passages=passages))[:top_k]
+        kept = [r for r in ranked if r["score"] >= s.rerank_min_score] or ranked[:1]
+        chunks = [r["text"] for r in kept]
     update_current_span(test_case=LLMTestCase(input=query, retrieval_context=chunks))
     return chunks
 

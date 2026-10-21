@@ -11,7 +11,9 @@ pipeline.
 - Vector store: Postgres + pgvector (Docker)
 - Embeddings: `nomic-embed-text` via Ollama
 - Generator: `llama3.2:3b` via Ollama; set `LLM_PROVIDER=groq` (+ `GROQ_API_KEY`) to use Groq instead
-- Judge (evaluation only): `llama3.1` via Ollama, configured in `elyaeval.toml` (any provider works
+- Retrieval: vector search for 8 candidates, reranked by a cross-encoder (FlashRank
+  `ms-marco-MiniLM-L-12-v2`, CPU); up to 3 chunks the reranker scores as relevant are kept
+- Judge (evaluation only): `qwen2.5:7b` via Ollama, configured in `elyaeval.toml` (any provider works
   there)   a different model from the generator, so the app is never graded by the model that wrote
   the answer
 - Knowledge base: 8 short documents in `sample_docs/` (solar, wind, storage, hydropower, geothermal,
@@ -48,7 +50,7 @@ Prerequisites: Docker and [Ollama](https://ollama.com):
 ```bash
 ollama pull nomic-embed-text      # embeddings
 ollama pull llama3.2:3b           # generator
-ollama pull llama3.1              # evaluation judge
+ollama pull qwen2.5:7b            # evaluation judge
 
 python -m venv .venv && source .venv/bin/activate     # Windows: .\.venv\Scripts\Activate.ps1
 pip install -r requirements-eval.txt                  # app + elyaeval
@@ -68,8 +70,11 @@ uvicorn src.api:app --host 0.0.0.0 --port 8000
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | |
 | `LLM_PROVIDER` / `LLM_MODEL` | `ollama` / `llama3.2:3b` | `groq` / `openai/gpt-oss-120b` with `GROQ_API_KEY` |
 | `EMBED_MODEL` / `EMBED_DIM` | `nomic-embed-text` / `768` | changing them requires re-ingesting |
-| `TOP_K` | `3` | chunks retrieved per question |
-| `CHUNK_SIZE` / `CHUNK_OVERLAP` | `256` / `32` tokens | used by `src.ingest` |
+| `TOP_K` | `3` | most chunks passed to the generator per question |
+| `RETRIEVE_CANDIDATES` | `8` | chunks the vector search fetches for the reranker |
+| `RERANK_MODEL` | `ms-marco-MiniLM-L-12-v2` | FlashRank cross-encoder (downloads ~22 MB on first use); `""` = no reranking |
+| `RERANK_MIN_SCORE` | `0.5` | candidates scoring below this are dropped (the best one is always kept) |
+| `CHUNK_SIZE` / `CHUNK_OVERLAP` | `128` / `16` tokens | used by `src.ingest` |
 
 ## The goldens
 
@@ -121,7 +126,7 @@ elyaeval repo). Then, per run, with the app and Ollama running on your machine:
 $env:REPO_URL         = "https://github.com/<you>/<this-repo>.git"
 $env:SUT_URL          = "http://host.docker.internal:8000"
 $env:JUDGE_PROVIDER   = "ollama"
-$env:JUDGE_MODEL_NAME = "llama3.1"
+$env:JUDGE_MODEL_NAME = "qwen2.5:7b"
 $env:JUDGE_BASE_URL   = "http://host.docker.internal:11434"
 envsubst < pipelinerun.yaml | kubectl create -n elyaeval -f -
 ```

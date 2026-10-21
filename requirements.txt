@@ -9,6 +9,9 @@ asyncpg
 fastapi
 uvicorn
 python-dotenv>=1.2.2,<2
+# reranker: cross-encoder on ONNX Runtime (no PyTorch)
+flashrank==0.2.10
+huggingface-hub<1.0     # 1.x needs click>=8.4, which deepeval 4.2.0 forbids
 requests
 # tracing spans for the component evaluation (no judge/metrics in the app);
 # keep in step with the deepeval version elyaeval pins

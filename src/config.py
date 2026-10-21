@@ -6,7 +6,7 @@ Ollama for embeddings AND generation. Set LLM_PROVIDER=groq (+ GROQ_API_KEY)
 to generate with Groq instead.
 
 The generator model is deliberately NOT the model the evaluation judge uses
-(llama3.1, see elyaeval.toml), so the app's answers are never graded by the
+(qwen2.5:7b, see elyaeval.toml), so the app's answers are never graded by the
 model that wrote them.
 """
 
@@ -37,6 +37,10 @@ class Settings:
     llm_timeout_seconds: float
     groq_api_key: str | None
     top_k: int
+    retrieve_candidates: int
+    rerank_model: str
+    rerank_min_score: float
+    rerank_cache_dir: Path
     chunk_size: int
     chunk_overlap: int
     docs_dir: Path
@@ -62,7 +66,16 @@ def get_settings() -> Settings:
         llm_temperature=float(os.getenv("LLM_TEMPERATURE", "0.1")),
         llm_timeout_seconds=float(os.getenv("LLM_TIMEOUT_SECONDS", "300")),
         groq_api_key=os.getenv("GROQ_API_KEY"),
+        # Retrieval: the vector search fetches RETRIEVE_CANDIDATES chunks, a
+        # cross-encoder reranker scores each against the question, and up to
+        # TOP_K chunks scoring >= RERANK_MIN_SCORE are kept (always at least
+        # the best one, so the generator can say the answer isn't there).
+        # RERANK_MODEL="" turns reranking off: plain top-TOP_K vector search.
         top_k=int(os.getenv("TOP_K", "3")),
+        retrieve_candidates=int(os.getenv("RETRIEVE_CANDIDATES", "8")),
+        rerank_model=os.getenv("RERANK_MODEL", "ms-marco-MiniLM-L-12-v2"),
+        rerank_min_score=float(os.getenv("RERANK_MIN_SCORE", "0.5")),
+        rerank_cache_dir=Path(os.getenv("RERANK_CACHE_DIR", PROJECT_ROOT / ".flashrank_cache")),
         # ~one paragraph per chunk: whole-document chunks fill the context
         # with text unrelated to a one-fact question (low contextual relevancy)
         chunk_size=int(os.getenv("CHUNK_SIZE", "128")),

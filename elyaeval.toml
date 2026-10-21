@@ -1,25 +1,26 @@
 # elyaeval configuration for this demo (read by elyaeval from the working
 # directory upward). Any value can be overridden per run with ELYAEVAL_JUDGE_*
 # environment variables, e.g. to try a hosted judge:
-#   ELYAEVAL_JUDGE_PROVIDER=anthropic ELYAEVAL_JUDGE_MODEL=claude-sonnet-5-5 \
+#   ELYAEVAL_JUDGE_PROVIDER=anthropic ELYAEVAL_JUDGE_MODEL=claude-sonnet-5 \
 #   ANTHROPIC_API_KEY=... deepeval test run test_elyaeval_rag_qa.py
 
 [judge]
-# Local Ollama judge, separate from the Groq generator so a model never
-# grades its own answers. Native Ollama API = schema-constrained JSON.
+# Local Ollama judge, a different model from the generator (llama3.2:3b) so a
+# model never grades its own answers. Native Ollama API = schema-constrained
+# JSON. qwen2.5:7b over llama3.1: on the same answers it scored faithfulness
+# and contextual recall far closer to a manual check (llama3.1 flipped
+# negations and missed facts that were in the context).
 provider = "ollama"
-model = "llama3.1"
-# timeout_seconds = 900   # default for local providers
-# Cap each judge reply: a small local model can get stuck repeating itself
-# inside schema-constrained JSON and generate for 10+ minutes. A capped reply
-# fails fast and is retried instead of eating the golden's whole time budget.
-options = { generation_kwargs = { num_predict = 2048 } }
+model = "qwen2.5:7b"
+# timeout_seconds = 900     # default for local providers
+# max_output_tokens = 2048  # default for local providers: stops runaway JSON replies
 
 [thresholds]
 default = 0.7
-# Share of the retrieved text that is relevant to the question: with top_k = 3
-# paragraph-sized chunks and a one-fact question, ~0.5 is the realistic maximum.
-contextual_relevancy = 0.4
+# Share of the retrieved statements relevant to the question. The reranker
+# keeps only relevant paragraphs, but a paragraph still holds 2-4 statements
+# and a one-fact question needs one of them: 0.5-0.67 is a correct retrieval.
+contextual_relevancy = 0.5
 
 [cache]
 # Re-running the suite after an unrelated change reuses identical judgements
